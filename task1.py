@@ -49,7 +49,7 @@ eps_val = 0.001
 dih_b = 10.0
 dih_a = -5.0
 x = numpy.arange(0, 2, 0.01)
-alphas = numpy.arange(0, 100.1, 0.1)
+alphas = numpy.arange(0, 80.1, 0.1)
 ns = range(2, 8, 2)
 roots = {2: [], 4: [], 6: []}
 for n in ns:
@@ -62,8 +62,8 @@ fig, ax = plt.subplots(1, 2)
 fig.set_size_inches(16, 6)
 gr = ax[0]
 for n in ns:
-    gr.plot(alphas, roots[n], label = 'n = ' + str(n))
-gr.legend(loc='upper right')
+    gr.plot(alphas, roots[n], label='n = ' + str(n))
+gr.legend(loc='upper left')
 gr.set_title('Корни f(x) при различных n и alpha')
 gr.set_xlabel('Alpha')
 gr.set_ylabel('Значение корня x*')
@@ -71,10 +71,17 @@ gr.grid()
 
 gr = ax[1]
 gr.grid()
-gr.set_title('График f(x), n = ' + str(ns[-1]) + ', alpha = ' + str(alphas[-1]))
+gr.set_title('График f(x) при различных n, alpha = 5.0')
 gr.set_xlabel('x')
 gr.set_ylabel('f(x)')
-gr.plot(x, myFunctor(x))
+myFunctor = ProteinSynthesisFunc(2, 5.0)
+gr.plot(x, myFunctor(x), label='n = 2')
+myFunctor.n = 4
+gr.plot(x, myFunctor(x), label='n = 4')
+myFunctor.n = 6
+gr.plot(x, myFunctor(x), label='n = 6')
+gr.legend(loc='upper left')
+
 fig.tight_layout()
 plt.show()
 
@@ -108,18 +115,17 @@ for gr in ax:
 ax[0].set_yscale('log')
 ax[0].set_ylabel('abs(f($x_n$))')
 ax[0].set_title('Значение abs(f(x)) в точке x*. Оси в логарифмическом масштабе')
-ax[0].plot(count, dihError, label = 'метод дихотомии')
-ax[0].plot(count, newtonError, label = 'метод Ньютона')
+ax[0].plot(count, dihError, label='метод дихотомии')
+ax[0].plot(count, newtonError, label='метод Ньютона')
 ax[0].legend(loc='upper right')
-
 ax[1].set_ylabel('$x_n$')
 ax[1].set_title('Метод Ньютона, значение x*')
 ax[1].plot(count, newtonErrorX)
 
 ax[2].set_ylabel('$x_n$')
 ax[2].set_title('Метод дихотомии, значение x*')
-ax[2].plot(count, dihErrorXa, label = 'Значение a')
-ax[2].plot(count, dihErrorXb, label = 'Значение b')
+ax[2].plot(count, dihErrorXa, label='Значение a')
+ax[2].plot(count, dihErrorXb, label='Значение b')
 ax[2].legend(loc='upper right')
 
 fig.tight_layout()
