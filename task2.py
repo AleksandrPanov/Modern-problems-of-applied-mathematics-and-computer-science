@@ -71,9 +71,14 @@ gr = ax
 gr.set_xscale("log")
 for n in ns:
     gr.plot(roots[n], alphas[len(alphas) - len(roots[n]):], label='n = ' + str(n))
+
+plt.rcParams.update({'font.size': 18})
+plt.xlabel('xlabel', fontsize=16)
+plt.ylabel('ylabel', fontsize=16)
+
 gr.legend(loc='upper right')
-gr.set_title('Alpha от T')
-gr.set_xlabel('T')
+gr.set_title('Alpha от $\\tau$')
+gr.set_xlabel('$\\tau$')
 gr.set_ylabel('Alpha')
 gr.grid()
 
