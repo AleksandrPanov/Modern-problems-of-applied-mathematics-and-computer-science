@@ -1,8 +1,8 @@
 import numpy
 import matplotlib.pyplot as plt
-from numba import njit
-from numba import jit
+#from numba import njit
 from math import log
+from math import inf
 
 x_0 = 0.5
 start = 10000
@@ -13,13 +13,13 @@ delta_r = 0.001
 num_r = int((max_r - start_r) / delta_r) + 1
 xs = numpy.zeros(shape=(num_y), dtype=numpy.float64)
 
-@njit(cache=True)
+#@njit(cache=True)
 def calculate(x, start, r):
     for i in range(start):
         x = x*(r-x)
     return x
 
-@njit(cache=True)
+#@njit(cache=True)
 def calculate_res(xs, num_y, r):
     for i in range(1, num_y):
         xs[i] = xs[i-1]*(r-xs[i-1])
@@ -34,11 +34,16 @@ def drawGr(xs, x_0, start, num_y, num_r, delta_r, start_r, gr1):
         gr1.plot(rs, xs, 'g.', markersize=0.05)
         gr2.plot(r, getLyapunov(xs, r, num_y), 'bo', markersize=0.5)
 
-@njit(cache=True)
+#@njit(cache=True)
 def getLyapunov(xs, r, num_y):
     tmp = 0.0
     for x in xs:
-        tmp += log(abs(r-2*x))
+        val = abs(r-2*x)
+        if val > 0.0:
+            tmp += log(abs(r-2*x))
+        else:
+            tmp = -inf
+            break
     return tmp/num_y
 
 print(calculate(x_0, 2000, 4.))        
@@ -53,18 +58,16 @@ gr1, gr2 = ax[0], ax[1]
 
 drawGr(xs, x_0, start, num_y, num_r, delta_r, start_r, gr1)
 
-plt.rcParams.update({'font.size': 18})
-plt.xlabel('xlabel', fontsize=16)
-plt.ylabel('ylabel', fontsize=16)
+plt.rcParams.update({'font.size': 20})
 
-gr1.set_title('Диаграмма ветвления')
-gr1.set_xlabel('r')
-gr1.set_ylabel('x')
+gr1.set_title('Бифуркационная диаграмма')
+gr1.set_xlabel('r', fontsize=20)
+gr1.set_ylabel('x', fontsize=20)
 gr1.grid()
 
 gr2.set_title('Значение ляпуновского показателя')
-gr2.set_xlabel('r')
-gr2.set_ylabel('$\\lambda$')
+gr2.set_xlabel('r', fontsize=20)
+gr2.set_ylabel('$\\lambda$', fontsize=20)
 gr2.grid()
 
 
