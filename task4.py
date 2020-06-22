@@ -90,29 +90,29 @@ def initCond(h, T, x0):
 i = 0
 for h in hs:   
     # task 1
-    xs, ts = initCond(h, 50.0, x0)
+    xs, ts = initCond(h, 20.0, x0)
     methodEuler(xs, func1_1, h)
-    gr1.plot(ts, getError(xs, func1_1_sol, ts, x0))
+    gr1.plot(ts, getError(xs, func1_1_sol, ts, x0), label="h="+str(h))
     if h == hs[-1]:
-        res_gr[0].plot(ts, getError(xs, func1_1_sol, ts, x0))
+        res_gr[0].plot(ts, getError(xs, func1_1_sol, ts, x0), label='метод Эйлера')
     
     methodRungeKutta(xs, func1_1, h)
-    gr3.plot(ts, getError(xs, func1_1_sol, ts, x0))
+    gr3.plot(ts, getError(xs, func1_1_sol, ts, x0), label="h="+str(h))
     if h == hs[-1]:
-        res_gr[0].plot(ts, getError(xs, func1_1_sol, ts, x0))
+        res_gr[0].plot(ts, getError(xs, func1_1_sol, ts, x0), label='метод Рунге-Кутта')
     
     methodEuler(xs, func1_2, h)
-    gr2.plot(ts, getError(xs, func1_2_sol, ts, x0))
+    gr2.plot(ts, getError(xs, func1_2_sol, ts, x0), label="h="+str(h))
     
     methodRungeKutta(xs, func1_2, h)
-    gr4.plot(ts, getError(xs, func1_2_sol, ts, x0))
+    gr4.plot(ts, getError(xs, func1_2_sol, ts, x0), label="h="+str(h))
     
     # task 2
     xs, ts = initCond(h, 100.0, x0_2)
     methodEuler(xs, func2, h)
-    res_gr[1].plot(ts, getError2(xs, func2_sol, ts, x0_2))
+    res_gr[1].plot(ts, getError2(xs, func2_sol, ts, x0_2), label="h="+str(h))
     #methodRungeKutta(xs, func2, h)
-    #res_gr[1].plot(ts, getError2(xs, func2_sol, ts, x0_2))
+    #res_gr[1].plot(ts, getError2(xs, func2_sol, ts, x0_2), label="h="+str(h))
     
     # task 3
     xs1, ts1 = initCond(h, 1000.0, x0_3)
@@ -120,25 +120,26 @@ for h in hs:
     #
     xs2, ts2 = initCond(h/2., 1000.0, x0_3)
     methodRungeKutta(xs2, func3, h/2.)
-    res_gr[2].plot(ts1, getError3(xs1, xs2))  
+    res_gr[2].plot(ts1, getError3(xs1, xs2), label="h="+str(h))  
     i+=1
 
-plt.rcParams.update({'font.size': 20})
+plt.rcParams.update({'font.size': 12})
 
 def initGraph(gr, name):
     gr.set_yscale('log')
-    gr.set_title(name)
-    gr.set_xlabel('t', fontsize=20)
-    gr.set_ylabel('error', fontsize=20)
+    gr.set_title(name, fontsize=16)
+    gr.set_xlabel('t', fontsize=14)
+    gr.set_ylabel('error', fontsize=14)
+    gr.legend(loc='best')
     gr.grid()
 
-initGraph(gr1, "График ошибки метода Эйлера, x'=x")
-initGraph(gr2, "График ошибки метода Эйлера, x'=-x")
-initGraph(gr3, "График ошибки метод Рунге-Кутта 4-го порядка, x'=-x")
-initGraph(gr4, "График ошибки метод Рунге-Кутта 4-го порядка, x'=-x")
-initGraph(res_gr[0], "График ошибки методов, x'=x")
-initGraph(res_gr[1], "График ошибки мeтода Эйлера, x'' + x = 0")
-initGraph(res_gr[2], "График ошибки мeтода Рунге-Кутта 4-го порядка, система Ресслера")
+initGraph(gr1, "Ошибка метода Эйлера, x'=x")
+initGraph(gr2, "Ошибка метода Эйлера, x'=-x")
+initGraph(gr3, "Ошибка метод Рунге-Кутта 4-го порядка, x'=-x")
+initGraph(gr4, "Ошибка метод Рунге-Кутта 4-го порядка, x'=-x")
+initGraph(res_gr[0], "Ошибка методов Эйлера и Рунге-Кутта, x'=x")
+initGraph(res_gr[1], "Ошибка мeтода Эйлера, x'' + x = 0")
+initGraph(res_gr[2], "Ошибка мeтода Рунге-Кутта, система Ресслера")
 
 
 fig.tight_layout()
