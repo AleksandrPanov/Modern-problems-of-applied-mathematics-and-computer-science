@@ -6,7 +6,7 @@ from numpy.linalg import norm
 
 x0 = numpy.array([1.])
 x0_2 = numpy.array([1., 0.])
-x0_3 = numpy.array([1., 1.0, 0.])
+x0_3 = numpy.array([1., 0.0, 0.])
 hs = [0.1, 0.01, 0.001]
 
 @njit
@@ -81,6 +81,9 @@ res_fig.set_size_inches(11, 12)
 dop_fig, dop_gr = plt.subplots(1)
 dop_fig.set_size_inches(6, 6)
 
+last_fig, last_gr = plt.subplots(1)
+last_fig.set_size_inches(6, 6)
+
 gr1, gr2 = ax[0][0], ax[1][0]
 gr3, gr4 = ax[0][1], ax[1][1]
 
@@ -94,7 +97,7 @@ def initCond(h, T, x0):
 i = 0
 for h in hs:   
     # task 1
-    xs, ts = initCond(h, 20.0, x0)
+    xs, ts = initCond(h, 200.0, x0)
     methodEuler(xs, func1_1, h)
     gr1.plot(ts, getError(xs, func1_1_sol, ts, x0), label="h="+str(h))
     if h == hs[-1]:
@@ -112,7 +115,7 @@ for h in hs:
     gr4.plot(ts, getError(xs, func1_2_sol, ts, x0), label="h="+str(h))
     
     # task 2
-    xs, ts = initCond(h, 100.0, x0_2)
+    xs, ts = initCond(h, 1000.0, x0_2)
     methodEuler(xs, func2, h)
     res_gr[1].plot(ts, getError2(xs, func2_sol, ts, x0_2), label="h="+str(h))
     #methodRungeKutta(xs, func2, h)
@@ -126,18 +129,29 @@ for h in hs:
     x2 = [xs[i][1] for i in range(len(xs))]
     dop_gr.plot(x1, x2, label="Численное решение h = "+str(h))
     # task 3
-    xs1, ts1 = initCond(h, 1000.0, x0_3)
+    T = 200.0
+    xs1, ts1 = initCond(h, T, x0_3)
     methodRungeKutta(xs1, func3, h)
     #
-    xs2, ts2 = initCond(h/2., 1000.0, x0_3)
+    xs2, ts2 = initCond(h/2., T, x0_3)
     methodRungeKutta(xs2, func3, h/2.)
-    res_gr[2].plot(ts1, getError3(xs1, xs2), label="h="+str(h))  
+    res_gr[2].plot(ts1, getError3(xs1, xs2), label="h="+str(h)) 
+    if h == 0.001:
+        st = 0#900
+        ts = numpy.arange(st, T, h)
+        x1 = [xs1[i][0] for i in range(st*1000, len(xs1))]
+        x2 = [xs1[i][2] for i in range(st*1000, len(xs1))]
+        last_gr.plot(x1, x2, label="h="+str(h))#,'.b', markersize='0.4')
+        
+        #x1 = [xs2[2*i][0] for i in range(st*1000, len(xs1))]
+        #x2 = [xs2[2*i][2] for i in range(st*1000, len(xs1))]
+        #last_gr.plot(ts, x1, label="h="+str(h/2))
     i+=1
 
 plt.rcParams.update({'font.size': 12})
 
 def initGraph(gr, name, x='t', y='error'):
-    if name != "Фазовая траектория системы":
+    if name != "Фазовая траектория системы" and name != "Фазовая траектория системы Реслера":
         gr.set_yscale('log')
     gr.set_title(name, fontsize=16)
     gr.set_xlabel(x, fontsize=14)
@@ -153,8 +167,10 @@ initGraph(res_gr[0], "Ошибка методов Эйлера и Рунге-К�
 initGraph(res_gr[1], "Ошибка мeтода Эйлера, x'' + x = 0")
 initGraph(res_gr[2], "Ошибка мeтода Рунге-Кутта, система Ресслера")
 initGraph(dop_gr, "Фазовая траектория системы", "x(t)", "y(t)")
+initGraph(last_gr, "Фазовая траектория системы Реслера", "x(t)", "z(t)")
 
 fig.tight_layout()
 res_fig.tight_layout()
 dop_fig.tight_layout()
+last_fig.tight_layout()
 plt.show()
