@@ -28,17 +28,17 @@ def func1_2_sol(t, x0):
 @njit
 def func2(t, x0):
     return numpy.array([x0[1], -x0[0]])
-    
+
+@njit
+def func2_sol(t, x0):
+    return numpy.array([cos(t), -sin(t)])
+
 @njit
 def func3(t, tmp):
     x = tmp[0]
     y = tmp[1]
     z = tmp[2]
     return numpy.array([-y-z, x+0.2*y, 0.2+(x-5.7)*z])
-
-@njit
-def func2_sol(t, x0):
-    return numpy.array([cos(t), -sin(t)])
 
 @njit
 def methodEuler(x, f, h):
@@ -74,8 +74,12 @@ def getError3(xs1, xs2):
 # output task
 fig, ax = plt.subplots(2, 2)
 fig.set_size_inches(22, 12)
+
 res_fig, res_gr = plt.subplots(3)
 res_fig.set_size_inches(11, 12)
+
+dop_fig, dop_gr = plt.subplots(1)
+dop_fig.set_size_inches(6, 6)
 
 gr1, gr2 = ax[0][0], ax[1][0]
 gr3, gr4 = ax[0][1], ax[1][1]
@@ -113,7 +117,14 @@ for h in hs:
     res_gr[1].plot(ts, getError2(xs, func2_sol, ts, x0_2), label="h="+str(h))
     #methodRungeKutta(xs, func2, h)
     #res_gr[1].plot(ts, getError2(xs, func2_sol, ts, x0_2), label="h="+str(h))
-    
+    ts = numpy.arange(0, 7, h)
+    #if h == 0.1:
+    #    x1 = [func2_sol(t, x0_2)[0] for t in ts]
+    #    x2 = [func2_sol(t, x0_2)[1] for t in ts]
+    #    dop_gr.plot(x1, x2, label="Аналитическое решение")#$x_0$=0, $y_0$=0
+    x1 = [xs[i][0] for i in range(len(xs))]
+    x2 = [xs[i][1] for i in range(len(xs))]
+    dop_gr.plot(x1, x2, label="Численное решение h = "+str(h))
     # task 3
     xs1, ts1 = initCond(h, 1000.0, x0_3)
     methodRungeKutta(xs1, func3, h)
@@ -125,11 +136,12 @@ for h in hs:
 
 plt.rcParams.update({'font.size': 12})
 
-def initGraph(gr, name):
-    gr.set_yscale('log')
+def initGraph(gr, name, x='t', y='error'):
+    if name != "Фазовая траектория системы":
+        gr.set_yscale('log')
     gr.set_title(name, fontsize=16)
-    gr.set_xlabel('t', fontsize=14)
-    gr.set_ylabel('error', fontsize=14)
+    gr.set_xlabel(x, fontsize=14)
+    gr.set_ylabel(y, fontsize=14)
     gr.legend(loc='best')
     gr.grid()
 
@@ -140,8 +152,9 @@ initGraph(gr4, "Ошибка метод Рунге-Кутта 4-го поряд�
 initGraph(res_gr[0], "Ошибка методов Эйлера и Рунге-Кутта, x'=x")
 initGraph(res_gr[1], "Ошибка мeтода Эйлера, x'' + x = 0")
 initGraph(res_gr[2], "Ошибка мeтода Рунге-Кутта, система Ресслера")
-
+initGraph(dop_gr, "Фазовая траектория системы", "x(t)", "y(t)")
 
 fig.tight_layout()
 res_fig.tight_layout()
+dop_fig.tight_layout()
 plt.show()
